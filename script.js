@@ -238,21 +238,34 @@ function initContactForm() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
 
-        // Simulação de envio seguro de dados
-        setTimeout(() => {
+        // Envio real dos dados para a API serverless Vercel
+        fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, phone, message })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na resposta do servidor.');
+            }
+            return response.json();
+        })
+        .then(data => {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
-            
+
             // Sucesso do Envio
-            messageBox.textContent = `Obrigado, ${name}! Sua mensagem foi enviada. Entrarei em contato via WhatsApp em breve.`;
+            messageBox.textContent = `Obrigado, ${name}! Sua solicitação foi salva no nosso banco de dados. Redirecionando para o WhatsApp...`;
             messageBox.className = 'form-message success';
-            
+
             // Redirecionar direto para o WhatsApp preenchendo as informações
             const whatsappBaseUrl = "https://wa.me/5500000000000";
             const customMessage = encodeURIComponent(
                 `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
             );
-            
+
             // Limpa o formulário
             form.reset();
 
@@ -260,7 +273,14 @@ function initContactForm() {
             setTimeout(() => {
                 window.open(`${whatsappBaseUrl}?text=${customMessage}`, '_blank', 'noopener,noreferrer');
             }, 1500);
+        })
+        .catch(err => {
+            console.error('Erro de envio do lead:', err);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
 
-        }, 1500);
+            messageBox.textContent = "Ocorreu um problema ao registrar seus dados no banco. Por favor, tente novamente ou fale diretamente pelo WhatsApp.";
+            messageBox.className = 'form-message error';
+        });
     });
 }

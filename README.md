@@ -52,6 +52,34 @@ Se o servidor atual for fechado, você pode iniciar o site simplesmente:
 
 ---
 
+## 🔥 Configuração do Firebase e Vercel
+
+Para que o formulário de contato salve os dados no seu banco de dados Firebase Firestore, certifique-se de configurar as seguintes variáveis de ambiente na Vercel:
+
+1. **Variáveis de Ambiente na Vercel**:
+   - `FIREBASE_PROJECT_ID`: O ID único do seu projeto Firebase.
+   - `FIREBASE_API_KEY`: A chave de API Web (Web API Key) do projeto.
+
+2. **Regras de Segurança do Firestore**:
+   No console do Firebase, acesse **Firestore Database > Rules (Regras)** e substitua pelo conteúdo abaixo. Isso permite que a API do site envie contatos (apenas criação), mas impede que hackers leiam ou excluam seus dados:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leads/{leadId} {
+      // Qualquer visitante pode enviar uma solicitação de contato
+      allow create: if true;
+      
+      // Proíbe leitura pública, alteração ou deleção (Segurança Máxima)
+      allow read, update, delete: if false;
+    }
+  }
+}
+```
+
+---
+
 ## 💻 Comandos Úteis do Git (GitHub)
 O repositório já está configurado e enviado para a branch `main` do seu GitHub:
 [https://github.com/pedro-magro/Landing-Page-Project](https://github.com/pedro-magro/Landing-Page-Project)
