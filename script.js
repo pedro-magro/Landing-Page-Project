@@ -275,12 +275,26 @@ function initContactForm() {
             }, 1500);
         })
         .catch(err => {
-            console.error('Erro de envio do lead:', err);
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
+            console.warn('Erro ao registrar lead na API (normal em ambiente local sem Vercel):', err);
+            
+            // Fallback: Exibe mensagem de aviso e prossegue para o WhatsApp mesmo com erro local de API
+            messageBox.textContent = `Aviso: Salvamento local indisponível, mas estamos te redirecionando para o WhatsApp da Teacher Raquel...`;
+            messageBox.className = 'form-message success'; // Usamos classe success para feedback positivo visual
 
-            messageBox.textContent = "Ocorreu um problema ao registrar seus dados no banco. Por favor, tente novamente ou fale diretamente pelo WhatsApp.";
-            messageBox.className = 'form-message error';
+            const whatsappBaseUrl = "https://wa.me/5511952025568";
+            const customMessage = encodeURIComponent(
+                `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
+            );
+
+            // Limpa o formulário
+            form.reset();
+
+            // Abre o WhatsApp
+            setTimeout(() => {
+                window.open(`${whatsappBaseUrl}?text=${customMessage}`, '_blank', 'noopener,noreferrer');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }, 1500);
         });
     });
 }
