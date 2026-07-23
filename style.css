@@ -1069,7 +1069,25 @@ footer {
     }
 }
 
-@media (max-width: 992px) {
+/* Ajuste para telas intermediárias (evita encavalamento do menu horizontal) */
+@media (min-width: 769px) and (max-width: 1080px) {
+    nav ul {
+        gap: 0.8rem;
+    }
+    nav a {
+        font-size: 0.82rem;
+        padding: 0.4rem 0.7rem;
+    }
+    .nav-cta {
+        padding: 0.5rem 1rem;
+        font-size: 0.82rem;
+    }
+    .logo {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
     .mobile-menu-btn {
         display: block;
     }

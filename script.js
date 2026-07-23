@@ -1,5 +1,5 @@
 /**
- * Landing Page - Teacher Sarah (Inglês Personalizado)
+ * Landing Page - Raquel Janzen Teacher (Inglês Personalizado)
  * Lógica de Interface, Animações e Segurança
  */
 
@@ -250,7 +250,7 @@ function initContactForm() {
             // Redirecionar direto para o WhatsApp preenchendo as informações
             const whatsappBaseUrl = "https://wa.me/5500000000000";
             const customMessage = encodeURIComponent(
-                `Olá Teacher Sarah! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
+                `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
             );
             
             // Limpa o formulário

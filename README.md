@@ -1,4 +1,4 @@
-# Landing Page - Teacher Sarah (Inglês Personalizado)
+# Landing Page - Raquel Janzen Teacher (Inglês Personalizado)
 
 Uma landing page premium, moderna, responsiva e minimalista desenvolvida especialmente para captação de alunos para aulas de inglês. O projeto é focado em alta conversão de leads e conta com segurança avançada no lado do cliente.
 
