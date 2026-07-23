@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initTypewriter();
     initScrollReveal();
+    initFAQ();
     initContactForm();
 });
 
@@ -34,6 +35,8 @@ function initMobileMenu() {
     const navbar = document.getElementById('navbar');
     const navLinks = document.querySelectorAll('nav a');
     
+    if (!menuBtn || !navbar) return;
+
     // Toggle Menu
     menuBtn.addEventListener('click', () => {
         navbar.classList.toggle('open');
@@ -88,7 +91,7 @@ function initTypewriter() {
 
         if (!isDeleting && currentText === fullWord) {
             // Pausa no final da palavra escrita
-            typeSpeed = 2000;
+            typeSpeed = 2200;
             isDeleting = true;
         } else if (isDeleting && currentText === '') {
             isDeleting = false;
@@ -112,8 +115,8 @@ function initScrollReveal() {
     const reveals = document.querySelectorAll('.reveal');
     
     const revealOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px"
     };
 
     const observer = new IntersectionObserver((entries, observer) => {
@@ -132,7 +135,37 @@ function initScrollReveal() {
 }
 
 /**
- * 5. Formulário de Contato - Validação e Segurança
+ * 5. FAQ Accordion (Perguntas Frequentes Interativas)
+ */
+function initFAQ() {
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            const answer = item.querySelector('.faq-answer');
+            
+            // Fecha outros abertos para manter visual clean
+            document.querySelectorAll('.faq-item').forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.faq-answer').style.maxHeight = null;
+                }
+            });
+            
+            // Toggle do item atual
+            item.classList.toggle('active');
+            if (item.classList.contains('active')) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            } else {
+                answer.style.maxHeight = null;
+            }
+        });
+    });
+}
+
+/**
+ * 6. Formulário de Contato - Validação e Segurança
  */
 function initContactForm() {
     const form = document.getElementById('contact-form');
@@ -163,7 +196,6 @@ function initContactForm() {
         // 1. Segurança Honeypot
         const honeypot = document.getElementById('website').value;
         if (honeypot.trim() !== '') {
-            // Se o campo oculto estiver preenchido, é um bot de spam
             console.warn("Spambot detectado e bloqueado.");
             messageBox.textContent = "Mensagem enviada com sucesso!"; // Sucesso falso para o bot
             messageBox.className = 'form-message success';
@@ -206,7 +238,7 @@ function initContactForm() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
 
-        // Simulação de envio seguro de dados (ex: via fetch para API ou EmailJS)
+        // Simulação de envio seguro de dados
         setTimeout(() => {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
@@ -215,16 +247,16 @@ function initContactForm() {
             messageBox.textContent = `Obrigado, ${name}! Sua mensagem foi enviada. Entrarei em contato via WhatsApp em breve.`;
             messageBox.className = 'form-message success';
             
-            // Opcional: Redirecionar direto para o WhatsApp preenchendo as informações
+            // Redirecionar direto para o WhatsApp preenchendo as informações
             const whatsappBaseUrl = "https://wa.me/5500000000000";
             const customMessage = encodeURIComponent(
-                `Olá Teacher Sarah! Meu nome é ${name}. Preenchi o formulário no seu site e gostaria de agendar uma conversa.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
+                `Olá Teacher Sarah! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
             );
             
             // Limpa o formulário
             form.reset();
 
-            // Abre o WhatsApp em nova guia após 2 segundos
+            // Abre o WhatsApp em nova guia após 1.5 segundos
             setTimeout(() => {
                 window.open(`${whatsappBaseUrl}?text=${customMessage}`, '_blank', 'noopener,noreferrer');
             }, 1500);
