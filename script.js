@@ -261,7 +261,7 @@ function initContactForm() {
             messageBox.className = 'form-message success';
 
             // Redirecionar direto para o WhatsApp preenchendo as informações
-            const whatsappBaseUrl = "https://wa.me/5500000000000";
+            const whatsappBaseUrl = "https://wa.me/5511952025568";
             const customMessage = encodeURIComponent(
                 `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
             );
