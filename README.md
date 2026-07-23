@@ -52,16 +52,20 @@ Se o servidor atual for fechado, você pode iniciar o site simplesmente:
 
 ---
 
-## 🔥 Configuração do Firebase e Vercel
+## 🔥 Configuração do Firebase (Client-side)
 
-Para que o formulário de contato salve os dados no seu banco de dados Firebase Firestore, certifique-se de configurar as seguintes variáveis de ambiente na Vercel:
+Para que o formulário de contato salve os dados no seu banco de dados Firebase Firestore sem depender de um servidor intermediário (API), você deve configurar suas chaves diretamente no topo do arquivo `script.js`:
 
-1. **Variáveis de Ambiente na Vercel**:
-   - `FIREBASE_PROJECT_ID`: O ID único do seu projeto Firebase.
-   - `FIREBASE_API_KEY`: A chave de API Web (Web API Key) do projeto.
+1. **Configuração no script.js**:
+   Abra o arquivo `script.js` e cole suas credenciais nas variáveis:
+   - `const FIREBASE_PROJECT_ID = "SEU_PROJECT_ID";`
+   - `const FIREBASE_API_KEY = "SUA_API_KEY";`
 
-2. **Regras de Segurança do Firestore**:
-   No console do Firebase, acesse **Firestore Database > Rules (Regras)** e substitua pelo conteúdo abaixo. Isso permite que a API do site envie contatos (apenas criação), mas impede que hackers leiam ou excluam seus dados:
+2. **Segurança das Chaves**:
+   Como este é um site estático rodando direto no navegador, a exposição do Project ID e da API Key no frontend é normal e padrão do Firebase. A segurança dos seus dados é garantida pelas **Regras de Segurança do Firestore** no console do Firebase.
+
+3. **Regras de Segurança do Firestore**:
+   No painel do Firebase, acesse **Firestore Database > Rules (Regras)** e cole o código abaixo. Isso permite apenas envios (gravações), mas proíbe que qualquer pessoa liste, leia ou apague seus contatos:
 
 ```javascript
 rules_version = '2';

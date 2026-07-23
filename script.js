@@ -3,6 +3,14 @@
  * Lógica de Interface, Animações e Segurança
  */
 
+// ==========================================================================
+// CONFIGURAÇÃO DO FIREBASE (Insira suas credenciais do Firebase aqui)
+// Nota: É seguro expor essas chaves no frontend, desde que as Regras de 
+// Segurança do Firestore estejam configuradas (veja o arquivo README.md).
+// ==========================================================================
+const FIREBASE_PROJECT_ID = "SEU_PROJECT_ID_AQUI"; // Cole aqui o ID do seu projeto
+const FIREBASE_API_KEY = "SUA_API_KEY_AQUI";       // Cole aqui a sua Chave de API Web
+
 document.addEventListener('DOMContentLoaded', () => {
     initHeaderScroll();
     initMobileMenu();
@@ -238,53 +246,19 @@ function initContactForm() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
 
-        // Envio real dos dados para a API serverless Vercel
-        fetch('/api/contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, email, phone, message })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor.');
+        const whatsappBaseUrl = "https://wa.me/5511952025568";
+        const customMessage = encodeURIComponent(
+            `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
+        );
+
+        function fallbackToWhatsApp(isSuccess = false) {
+            if (isSuccess) {
+                messageBox.textContent = `Obrigado, ${name}! Sua solicitação foi salva no nosso banco de dados. Redirecionando para o WhatsApp...`;
+                messageBox.className = 'form-message success';
+            } else {
+                messageBox.textContent = `Redirecionando para o WhatsApp da Teacher Raquel...`;
+                messageBox.className = 'form-message success';
             }
-            return response.json();
-        })
-        .then(data => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
-
-            // Sucesso do Envio
-            messageBox.textContent = `Obrigado, ${name}! Sua solicitação foi salva no nosso banco de dados. Redirecionando para o WhatsApp...`;
-            messageBox.className = 'form-message success';
-
-            // Redirecionar direto para o WhatsApp preenchendo as informações
-            const whatsappBaseUrl = "https://wa.me/5511952025568";
-            const customMessage = encodeURIComponent(
-                `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
-            );
-
-            // Limpa o formulário
-            form.reset();
-
-            // Abre o WhatsApp em nova guia após 1.5 segundos
-            setTimeout(() => {
-                window.open(`${whatsappBaseUrl}?text=${customMessage}`, '_blank', 'noopener,noreferrer');
-            }, 1500);
-        })
-        .catch(err => {
-            console.warn('Erro ao registrar lead na API (normal em ambiente local sem Vercel):', err);
-            
-            // Fallback: Exibe mensagem de aviso e prossegue para o WhatsApp mesmo com erro local de API
-            messageBox.textContent = `Aviso: Salvamento local indisponível, mas estamos te redirecionando para o WhatsApp da Teacher Raquel...`;
-            messageBox.className = 'form-message success'; // Usamos classe success para feedback positivo visual
-
-            const whatsappBaseUrl = "https://wa.me/5511952025568";
-            const customMessage = encodeURIComponent(
-                `Olá Raquel Janzen Teacher! Meu nome é ${name}.\n\nE-mail: ${email}\nWhatsApp: ${phone}\nObjetivo: ${message || 'Não especificado'}`
-            );
 
             // Limpa o formulário
             form.reset();
@@ -295,6 +269,47 @@ function initContactForm() {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
             }, 1500);
+        }
+
+        // Se as chaves do Firebase não estiverem configuradas, faz o fallback direto ao WhatsApp
+        if (FIREBASE_PROJECT_ID === "SEU_PROJECT_ID_AQUI" || FIREBASE_API_KEY === "SUA_API_KEY_AQUI") {
+            console.warn("Firebase não configurado. Prosseguindo diretamente com o WhatsApp.");
+            fallbackToWhatsApp(false);
+            return;
+        }
+
+        // Chamada direta do navegador para o Firestore REST API
+        const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/leads?key=${FIREBASE_API_KEY}`;
+        
+        const payload = {
+            fields: {
+                name: { stringValue: name },
+                email: { stringValue: email },
+                phone: { stringValue: phone },
+                message: { stringValue: message || "" },
+                createdAt: { timestampValue: new Date().toISOString() }
+            }
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar no Firestore REST API.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            fallbackToWhatsApp(true);
+        })
+        .catch(err => {
+            console.error('Erro de envio do lead para o Firebase:', err);
+            fallbackToWhatsApp(false);
         });
     });
 }
