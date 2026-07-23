@@ -109,30 +109,33 @@ body {
     100% { transform: translate(3vw, 3vh) scale(1.08); }
 }
 
-/* Navbar Minimalista com Efeito Blur (Branco) */
+/* Navbar Flutuante Cápsula Arredondada (Branco e Roxo) */
 header {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 30px);
+    max-width: 1200px;
     z-index: 1000;
-    border-bottom: 1px solid rgba(109, 40, 217, 0.05);
-    transition: var(--transition-smooth);
-    background-color: transparent;
-}
-
-header.scrolled {
+    border: 1px solid rgba(109, 40, 217, 0.08);
+    border-radius: 99px;
     background-color: var(--bg-nav);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    padding: 0.7rem 0;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+    transition: var(--transition-smooth);
+    box-shadow: 0 8px 30px rgba(109, 40, 217, 0.04);
+}
+
+header.scrolled {
+    top: 8px;
+    box-shadow: 0 10px 35px rgba(109, 40, 217, 0.08);
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 1.2rem 2rem;
+    padding: 0.6rem 1.8rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -140,7 +143,7 @@ header.scrolled {
 
 .logo {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
     text-decoration: none;
     color: var(--text-primary);
@@ -157,7 +160,7 @@ header.scrolled {
 nav ul {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    gap: 1.5rem; /* Reduzido de 2.5rem para evitar que os botões fiquem juntos */
     align-items: center;
 }
 
@@ -166,47 +169,35 @@ nav a {
     color: var(--text-secondary);
     font-weight: 500;
     font-size: 0.95rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 99px; /* Menu arredondado nos itens individualmente */
     transition: var(--transition-smooth);
-    position: relative;
+    display: inline-block;
+    white-space: nowrap;
 }
 
 nav a:hover, nav a.active {
     color: var(--purple-primary);
-}
-
-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--purple-primary);
-    transition: var(--transition-smooth);
-}
-
-nav a:hover::after, nav a.active::after {
-    width: 100%;
+    background-color: var(--purple-light);
 }
 
 .nav-cta {
     background: var(--purple-primary);
     color: white !important;
-    padding: 0.6rem 1.2rem;
+    padding: 0.65rem 1.4rem;
     border-radius: 99px;
     font-size: 0.9rem;
     box-shadow: 0 4px 15px var(--purple-glow);
+    white-space: nowrap; /* Evita quebra de linha no botão */
 }
 
 .nav-cta:hover {
     background: var(--purple-hover);
+    color: white !important;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.3);
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.35);
 }
 
-.nav-cta::after {
-    display: none;
-}
 
 /* Botão do Menu Mobile */
 .mobile-menu-btn {
@@ -1078,7 +1069,7 @@ footer {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .mobile-menu-btn {
         display: block;
     }
